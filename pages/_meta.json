@@ -1,7 +1,9 @@
 {
   "index": "Introduction",
   "another": "Another Page",
-  "advanced": "Advanced (A Folder)",
+  "game-servers": "Game-Servers",
+  "helm-charts": "Helm-Charts",
+  "setting up a kubernetes cluster": "Setting up a Kubernetes Cluster",
   "about": {
     "title": "About",
     "type": "page"
@@ -9,7 +11,7 @@
   "contact": {
     "title": "Contact ↗",
     "type": "page",
-    "href": "https://twitter.com/shuding_",
+    "href": "https://kubelize.com/Contact",
     "newWindow": true
   }
 }
