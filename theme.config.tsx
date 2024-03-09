@@ -18,7 +18,7 @@ const config: DocsThemeConfig = {
         kubelize
       </span>
     </>
-  )
+  ),
 
   project: {
     link: 'https://github.com/kubelize',
