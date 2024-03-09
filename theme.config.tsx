@@ -8,7 +8,7 @@ const config: DocsThemeConfig = {
     <>
       {/* PNG logo with alt text and styling */}
       <img
-        src="/.github/kubelize.png"
+        src="img/kubelize.png"
         alt="Logo"
         style={{ width: '24px', height: '24px', marginRight: '4px' }}
       />
