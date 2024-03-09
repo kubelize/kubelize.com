@@ -4,7 +4,7 @@ import { DocsThemeConfig } from 'nextra-theme-docs'
 const config: DocsThemeConfig = {
   logo: <span>kubelize</span>,
   project: {
-    link: 'https://github.com/kubelize/kubelize.com',
+    link: 'https://github.com/kubelize',
   },
   chat: {
     link: 'https://discord.com',
