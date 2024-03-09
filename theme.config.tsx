@@ -20,6 +20,12 @@ const config: DocsThemeConfig = {
     </>
   ),
 
+  useNextSeoProps() {
+    return {
+      titleTemplate: '%s – kubelize'
+    }
+  },
+
   project: {
     link: 'https://github.com/kubelize',
   },
