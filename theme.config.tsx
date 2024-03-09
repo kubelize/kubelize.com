@@ -26,6 +26,14 @@ const config: DocsThemeConfig = {
     }
   },
 
+  head: (
+    <>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta property="og:title" content="kubelize" />
+      <meta property="og:description" content="Making software kubernetes ready" />
+    </>
+  ),
+
   project: {
     link: 'https://github.com/kubelize',
   },
