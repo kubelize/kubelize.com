@@ -10,7 +10,7 @@ const config: DocsThemeConfig = {
       <img
         src="https://1.gravatar.com/avatar/bcc8278bd602130f71083cfd2574a8ba78d676e8f5b77186713b488ef8c8f3f6?size=256"
         alt="Logo"
-        style={{ width: '24px', height: '24px', marginRight: '4px' }}
+        style={{ width: '26px', height: '26px', marginRight: '6px' }}
       />
 
       {/* Additional text with styling */}
