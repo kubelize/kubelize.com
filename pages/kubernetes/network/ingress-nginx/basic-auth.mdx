@@ -1,0 +1,97 @@
+# Ingress Authentication
+
+Sometimes when exposing an application, there might be a specific path or multiple paths you'd want to restrict access to by protecting it with password authentication.  This guide will show a straight forward method to implement basic-auth for the ingress-nginx controller.
+
+## Create two ingresses
+
+The first step is to create the main ingress for the application, there's nothing special to this part as there's no changes needed from the default. As an example here's affine-pro's ingress:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging-nginx
+  namespace: affine-pro
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: affine.kubelize.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: web-affine-pro
+            port:
+              number: 3010
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - affine.kubelize.com
+    secretName: affine-pro-tls
+```
+
+This ingress directs all traffic for the subdomain "affine" on kubelize.com to the service web-affine-pro in the back-end of the application's micro services. Take note of the specified path "/", which allows any existing path to be accessed. 
+
+Affine-pro exposes it's API on the path "/graphql". Here we can create mutations to the internal database to register a new user for example. Per default this path has no password protection and its exposed on the ingress. To restrict it we'll create another ingress this time specifying a path:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: affine-pro-graphql
+  namespace: affine-pro
+  annotations:
+    # type of authentication
+    nginx.ingress.kubernetes.io/auth-type: basic
+    # name of the secret that contains the user/password definitions
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    # message to display with an appropiate context why the authentication is required
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required - Admin"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: affine.kubelize.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: web-affine-pro
+            port:
+              number: 3010
+        path: /graphql
+        pathType: Prefix
+```
+
+We set 3 annotations that let the ingress-controller know that we will be using basic auth that requires a secret, the secret will be called "basic-auth" and the message to be displayed will be "Authentication Required - Admin" We also specify the path: "/graphql" and the type: "Prefix" so that everything after the path is password protected aswell. That's it, next we'll need to create a secret that contains the actual required authentication data.
+
+## Create credentials with htpasswd
+
+This step requires the binary htpasswd, it can be installed on arch-linux per `yay apache-utils`. We'll use it to create a file that contains the credentials for our password-restricted path. Specify the file the credentials should be saved in with `-c [filename]` and then the username.
+
+```shellscript
+htpasswd -c auth foo
+New password:
+Re-type new password:
+Adding password for user foo
+```
+
+Create the secret using the file "auth" generated earlier
+
+```shellscript
+kubectl create secret generic basic-auth --from-file=auth
+secret "basic-auth" created
+```
+
+And that's it, when trying to access /graphql you're met with a Sign in window. 
+
+![](assets/46t21wwUaSUNnTa1kcTH_QDYOwOf4VPxwESQM5HyhXU=.blob)
+
+Pressing cancel results in a 401 Authorization required 
+
+![](assets/qlIk03wQZeQs3IunWHfd_REx2cTwwubxTd4iPpQZj5Y=.blob)
+
+## Final thoughts
+
+Making the API inaccessible, or even not exposing affine-pro on the internet at all, would be a more secure and stable solution. At a minimum this provides basic protection from manipulation on the API
